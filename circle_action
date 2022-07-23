@@ -1,8 +1,23 @@
-function [last_time_action_changed, last_color] = circle_action(last_color, colors, colors_size)
+function [last_time_action_changed] = circle_action(figure)
 %UNTITLED Summary of this function goes here
 %   Detailed explanation goes here
     % disp("CHANGING COLORS");
-    last_color = mod(last_color, colors_size) + 1;
-    rectangle("FaceColor", colors(last_color));
+    clf(figure) %clear everything in the figure 
+    diameter = 50;
+    screenWidth = 200;
+    screenHeight = 150;
+    offset = 10; 
+    
+    %create the position 
+    %r = a + (b - a) * rand();  generates a random numbers between [a, b] 
+    % a-> offset
+    x_axis = offset + (screenWidth - offset) * rand();
+    y_axis = offset + (screenHeight - offset) * rand();
+
+    % create the circle 
+    uilamp(figure,"Color", 'white',Position = [x_axis, y_axis, diameter, diameter]);
+    
+    %
+    
     last_time_action_changed = clock;
 end
