@@ -1,0 +1,23 @@
+% Create figure
+f = uifigure("Color", 'k');
+
+%% Constants
+diameter = 50
+screenWidth = 250
+screenHeight = 150
+a=10
+
+% r = a + (b-a)*rand(); % generates a random numbers between [a, b]
+xCoord = a +(screenWidth-a)*rand();
+yCoord = a+(screenHeight-a)*rand();
+
+%% Create circle
+circle = uilamp(f, "Color", 'white', Position=[xCoord, yCoord, diameter, diameter])
+
+% Delete circle
+%pause(3)
+clf(f) % Clears figure (circle)
+
+% Close figure
+pause(2)
+close(f) % Closes figure
