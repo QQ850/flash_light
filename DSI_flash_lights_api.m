@@ -23,7 +23,8 @@ textFile = fopen(fileName, 'a');
 % An event will be either flashing lights or a sound
 %f = figure;
 %f = figure('WindowState', 'maximized', 'Color', 'black'); % Full-screen figure
-rectangle('FaceColor', [0 0 0]) % [0, 0, 0] is black
+%rectangle('FaceColor', [0 0 0]) % [0, 0, 0] is black
+f = figure('Color', 'k');%to creat background
 
 %% Used for the action function. Switch between the functions to use different variables
 colors = get_color_array();
@@ -92,7 +93,7 @@ while notDone
     data = uint8(fread(t, 12))'; % Loads the first 12 bytes of the first packet, which should be the header
     data = [data, uint8(fread(t, double(typecast(fliplr(data(7:8)), 'uint16'))))']; % Loads the full packet, based on the header
     lengthdata = length(data);
-
+%this line%
     if all(ismember(headerStart,data)) % Checks if the packet contains the header
         packetType = data(6); %this determines whether it's an event or sensor packet.
 
@@ -135,7 +136,7 @@ while notDone
                     last_color = 0;
                     comment = '1, start of action';
                 end
-            elseif activity_state == activity_states.active % Active state
+            elseif activity_state == activity_states.active
                 if time_passed > ACTIVE_TIME
                     rectangle("FaceColor", 'k')  % Reset the automata ('k' == black)
                     activity_state = activity_states.quiet;
@@ -145,15 +146,16 @@ while notDone
             else
                 disp("unexpected state!")
             end
-
-            if activity_state == activity_states.active % Change here
+%change this is what Dr. Parson wants%
+            if activity_state == activity_states.active
                 milliseconds_since_color_changed = milliseconds(clock - last_time_color_changed);
                 milliseconds_since_color_changed = milliseconds_since_color_changed(6:6) * 1000000;
                 milliseconds_since_color_changed = time2num(milliseconds_since_color_changed);
 
                 if (milliseconds_since_color_changed > CHANGE_THRESHOLD)
                     % disp("CHANGING COLORS"); 
-                    [last_time_color_changed, last_color] = action(last_color, colors, colors_size);
+                    [last_time_color_changed] = action(f);
+                    %[last_time_color_changed, last_color] = action(last_color, colors, colors_size);
                     %[last_time_color_changed, last_color] = sound_action(last_color, sounds, sounds_size);
                 end
             end
