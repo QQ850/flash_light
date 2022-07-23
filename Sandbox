@@ -1,3 +1,5 @@
+% Notes
+
 % Create figure
 f = uifigure("Color", 'k');
 
