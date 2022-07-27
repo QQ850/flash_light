@@ -146,7 +146,7 @@ while notDone
             else
                 disp("unexpected state!")
             end
-%change this is what Dr. Parson wants%
+
             if activity_state == activity_states.active
                 milliseconds_since_color_changed = milliseconds(clock - last_time_color_changed);
                 milliseconds_since_color_changed = milliseconds_since_color_changed(6:6) * 1000000;
@@ -154,7 +154,14 @@ while notDone
 
                 if (milliseconds_since_color_changed > CHANGE_THRESHOLD)
                     % disp("CHANGING COLORS"); 
-                    [last_time_color_changed] = action(f);
+                    % Test circle action & updated
+                    for i=0:10
+                        disp(i)
+                        pause(1)
+                        [last_time_color_changed] = circle_action(f);
+                    end
+
+                    %[last_time_color_changed] = action(f);
                     %[last_time_color_changed, last_color] = action(last_color, colors, colors_size);
                     %[last_time_color_changed, last_color] = sound_action(last_color, sounds, sounds_size);
                 end
