@@ -24,7 +24,13 @@ textFile = fopen(fileName, 'a');
 %f = figure;
 %f = figure('WindowState', 'maximized', 'Color', 'black'); % Full-screen figure
 %rectangle('FaceColor', [0 0 0]) % [0, 0, 0] is black
-f = figure('Color', 'k');%to creat background
+%f = figure('Color', 'k');%to creat background       
+f = uifigure('WindowState', 'maximized','Color', 'black');
+for i=0:10
+    disp(i)
+    pause(1)
+    [last_time_color_changed] = circle_action(f);
+end
 
 %% Used for the action function. Switch between the functions to use different variables
 colors = get_color_array();
@@ -155,11 +161,7 @@ while notDone
                 if (milliseconds_since_color_changed > CHANGE_THRESHOLD)
                     % disp("CHANGING COLORS"); 
                     % Test circle action & updated
-                    for i=0:10
-                        disp(i)
-                        pause(1)
-                        [last_time_color_changed] = circle_action(f);
-                    end
+                    [last_time_color_changed] = action(f);
 
                     %[last_time_color_changed] = action(f);
                     %[last_time_color_changed, last_color] = action(last_color, colors, colors_size);
