@@ -1,11 +1,12 @@
-function [last_time_action_changed] = circle_action(figure)
+function [last_time_action_changed] = action(figure)
 %UNTITLED Summary of this function goes here
 %   Detailed explanation goes here
     % disp("CHANGING COLORS");
     clf(figure) %clear everything in the figure 
+    pos = figure.Position;
     diameter = 50;
-    screenWidth = 200;
-    screenHeight = 150;
+    screenWidth = pos(3);
+    screenHeight = pos(4);
     offset = 10; 
     
     %create the position 
