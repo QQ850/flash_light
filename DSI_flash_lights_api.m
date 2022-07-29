@@ -61,18 +61,19 @@ activity_state = activity_states.none;
 headerStart = [64, 65, 66, 67, 68]; % All DSI packet headers begin with '@ABCD', corresponding to these ASCII codes.
 cutoffcounter = 0;
 notDone = 1;
+nopacket = 1;
 
 num_flashes = 0;
 
 %% A bunch of constants
 % These constants are set up so that a future user can change them for
 % their needs.
-MAX_FLASHES = 10;
+MAX_FLASHES = 10; %10000
 MAX_PACKETS_DROPPED = 3000;
-WARMUP_TIME = 20;
-QUIET_TIME = 15; % Number of seconds between starting an action.
-ACTIVE_TIME = 1; % Number of seconds the action takes. Should always be smaller than quiet time.
-CHANGE_THRESHOLD = 50; % Number of milliseconds until there is a change in the action state
+WARMUP_TIME = 20;% 2
+QUIET_TIME = 15; %2  % Number of seconds between starting an action.
+ACTIVE_TIME = 1; %2  %Number of seconds the action takes. Should always be smaller than quiet time.
+CHANGE_THRESHOLD = 50;%100  % Number of milliseconds until there is a change in the action state
 
 
 while notDone
@@ -83,18 +84,23 @@ while notDone
         
         continue
     end
+
     if t.Bytesavailable < 12                     %if there's not even enough data available to read the header
         cutoffcounter = cutoffcounter + 1;       %take a step towards terminating the whole thing
         if cutoffcounter == MAX_PACKETS_DROPPED  %and if 1500 steps go by without any new data,
-            notDone = 0;                         %terminate the loop.
+            %notDone = 0;                         %terminate the loop.
         end
         disp('no bytes available') % Load bearing disp(). If removed increase the pause time
-        pause(0.001)
-        continue
+        %get rid of pause and continue
+        %pause(0.001)
+        %continue
+        nopacket = 1;
     else  %meaning, unless there's data available.
         cutoffcounter = 0;
+        nopacket = 0;
     end
 
+if nopacket == 0
     % Read the packet
     data = uint8(fread(t, 12))'; % Loads the first 12 bytes of the first packet, which should be the header
     data = [data, uint8(fread(t, double(typecast(fliplr(data(7:8)), 'uint16'))))']; % Loads the full packet, based on the header
@@ -115,6 +121,22 @@ while notDone
 
             EEGdata = EEGdata(1:7);
 
+            %% Write data to text file
+            fmtSpec = repmat('%f,', 1, 7);
+            
+            fprintf(textFile, '%f,', time_passed);
+            fprintf(textFile, '%f,', Timestamp);
+            
+            fprintf(textFile, fmtSpec, EEGdata);
+
+            fprintf(textFile, '%f', num_flashes);
+
+            fprintf(textFile, '%s,', comment);
+
+            fprintf(textFile, '\n');
+        end
+    end
+end
             %% Actions are a state automata
             % The comment is added at the end of a timestamp
             comment = '';
@@ -154,14 +176,14 @@ while notDone
             end
 
             if activity_state == activity_states.active
-                milliseconds_since_color_changed = milliseconds(clock - last_time_color_changed);
+                milliseconds_since_color_changed = milliseconds(clock - last_time_action_changed);
                 milliseconds_since_color_changed = milliseconds_since_color_changed(6:6) * 1000000;
                 milliseconds_since_color_changed = time2num(milliseconds_since_color_changed);
 
                 if (milliseconds_since_color_changed > CHANGE_THRESHOLD)
                     % disp("CHANGING COLORS"); 
                     % Test circle action & updated
-                    [last_time_color_changed] = action(f);
+                    [last_time_action_changed] = action(f);
 
                     %[last_time_color_changed] = action(f);
                     %[last_time_color_changed, last_color] = action(last_color, colors, colors_size);
@@ -169,21 +191,9 @@ while notDone
                 end
             end
 
-            %% Write data to text file
-            fmtSpec = repmat('%f,', 1, 7);
-            
-            fprintf(textFile, '%f,', time_passed);
-            fprintf(textFile, '%f,', Timestamp);
-            
-            fprintf(textFile, fmtSpec, EEGdata);
+           
 
-            fprintf(textFile, '%f', num_flashes);
-
-            fprintf(textFile, '%s,', comment);
-
-            fprintf(textFile, '\n');
-        end
-    end
+            pause(0.001);
 end
 
 close all;
