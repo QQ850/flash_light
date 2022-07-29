@@ -26,13 +26,18 @@ textFile = fopen(fileName, 'a');
 %rectangle('FaceColor', [0 0 0]) % [0, 0, 0] is black
 %f = figure('Color', 'k');%to creat background       
 f = uifigure('WindowState', 'maximized','Color', 'black');
+
+%% Testing circle Action
+% Delete Me
 for i=0:10
     disp(i)
     pause(1)
-    [last_time_color_changed] = circle_action(f);
+    [last_time_color_changed] = action(f);
 end
+pause(1)
+close(f)
 
-%% Used for the action function. Switch between the functions to use different variables
+%% Used for the color action function. Switch between the functions to use different variables
 colors = get_color_array();
 [~, colors_size] = size(colors);
 
