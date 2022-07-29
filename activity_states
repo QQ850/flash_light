@@ -1,0 +1,5 @@
+classdef activity_states
+    enumeration
+        none, quiet, active,warmup
+    end
+end
